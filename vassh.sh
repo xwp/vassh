@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# vassh: Vagrant Host-Guest SSH Command Wrapper
+# vassh: Vagrant Host-Guest SSH Command Wrapper/Proxy/Forwarder
 # Author: Weston Ruter <weston@x-team.com> (@westonruter), X-Team
 # Wrap commands to execute via SSH in host's working directory's corresponding synced_folder in Vagrant VM (guest)
 # USAGE:
