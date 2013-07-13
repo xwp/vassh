@@ -2,6 +2,8 @@
 # vassh: Vagrant Host-Guest SSH Command Wrapper/Proxy/Forwarder
 # Author: Weston Ruter <weston@x-team.com> (@westonruter), X-Team
 # Wrap commands to execute via SSH in host's working directory's corresponding synced_folder in Vagrant VM (guest)
+# Version: 0.1
+#
 # USAGE:
 # $ cd /home/thunderboy/vagrantproject/some/subdir
 # $ vaash pwd
