@@ -10,6 +10,7 @@
 # /vagrant/some/subdir
 # $ vassh make
 # $ vassh wp core update
+# Success: WordPress is at the latest version.
 # $ alias wp="_vassh_try wp"
 # $ wp exp<TAB> # if host has Bash completion added for WP-CLI, here i can haz tab-completions from Vagrant!
 
