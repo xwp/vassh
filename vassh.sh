@@ -5,6 +5,7 @@
 # Version: 0.1
 #
 # USAGE:
+# (First source vassh.sh into your .bashrc)
 # $ cd /home/thunderboy/vagrantproject/some/subdir
 # $ vaash pwd
 # /vagrant/some/subdir
