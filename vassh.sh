@@ -2,7 +2,7 @@
 # vassh: Vagrant Host-Guest SSH Command Wrapper/Proxy/Forwarder
 # Author: Weston Ruter <weston@x-team.com> (@westonruter), X-Team
 # Wrap commands to execute via SSH in host's working directory's corresponding synced_folder in Vagrant VM (guest)
-# Version: 0.1
+# Version: 0.2
 #
 # USAGE:
 # (First source vassh.sh into your .bashrc)
@@ -73,6 +73,7 @@ function _vagrant_locate_cwd_in_synced_folder {
             exit 0;
         }
         else {
+            print STDERR "vassh: Unable to locate cwd in synced folder\n";
             exit 3;
         }
 __HERE__
@@ -81,14 +82,27 @@ __HERE__
 
 # Wrapper command which passes arguments into vagrant-ssh as a command to execute in the
 # synced_folder (sub)directory corresponding to the host's current working directory
+# If no arguments are supplied, then it opens SSH prompt in the corresponding dir
 function vassh {
-    if [ -z "$1" ]; then
-        echo "vassh: Missing command to run on other system" 1>&2
+    dir=$(_vagrant_locate_cwd_in_synced_folder)
+    if [ -z "$dir" ]; then
         return 4
     fi
-    dir=$(_vagrant_locate_cwd_in_synced_folder)
-    cmd="cd $dir; $@"
-    vagrant ssh -c "$cmd" -- -t
+
+    # If no arguments provided, then just SSH but CD to cwd in synced_folder and leave with prompt
+    if [ -z "$1" ]; then
+        vagrant ssh -c "\
+            echo $dir > /tmp/vassh_start_dir; \
+            if ! grep -q vassh_start_dir ~/.bashrc; then \
+                echo 'if [ -e /tmp/vassh_start_dir ]; then cd \$(cat /tmp/vassh_start_dir); rm /tmp/vassh_start_dir; fi' >> ~/.bashrc;
+            fi \
+        "
+        vagrant ssh
+    # Otherwise run the command
+    else
+        cmd="cd $dir; $@"
+        vagrant ssh -c "$cmd" -- -t
+    fi
 }
 
 # Bash alias helper. Run the command via Vagraht SSH if we're in a Vagrant project,
