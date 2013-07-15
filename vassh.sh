@@ -5,7 +5,7 @@
 # Version: 0.2
 #
 # USAGE:
-# (First source vassh.sh into your .bashrc)
+# (Installation: First source vassh.sh into your .bashrc)
 # $ cd /home/thunderboy/vagrantproject/some/subdir
 # $ vaash pwd
 # /vagrant/some/subdir
@@ -14,8 +14,9 @@
 # Success: WordPress is at the latest version.
 # $ alias wp="_vassh_try wp"
 # $ wp exp<TAB> # if host has Bash completion added for WP-CLI, here i can haz tab-completions from Vagrant!
+# $ vasshin # drops you in Bash prompt inside the corresponding synced_folder
+# $ vaashin some-interactive-script # yay colors! yay tty!
 
-# TODO: Force SSH to open TTY mode so that output will be colorized?
 # TODO: Is this more suitable as a Vagrant plugin? http://docs.vagrantup.com/v2/plugins/
 # TODO: Can we keep the SSH connection open to speed up commands?
 
@@ -82,27 +83,51 @@ __HERE__
 
 # Wrapper command which passes arguments into vagrant-ssh as a command to execute in the
 # synced_folder (sub)directory corresponding to the host's current working directory
-# If no arguments are supplied, then it opens SSH prompt in the corresponding dir
 function vassh {
+    if [ -z "$1" ]; then
+        echo "vassh: Missing command to run on other system" 1>&2
+        return 4
+    fi
+    dir=$(_vagrant_locate_cwd_in_synced_folder)
+    cmd="cd $dir; $@"
+    vagrant ssh -c "$cmd" -- -t
+    # TODO: Support piping into vassh
+}
+
+
+# Wrapper command which copies command to vagrant and then logs in interactively to then
+# run the command upon login; if no command is supplied, then it drops you into the
+# synced_folder (sub)directory corresponding to the host's current working directory.
+function vasshin {
     dir=$(_vagrant_locate_cwd_in_synced_folder)
     if [ -z "$dir" ]; then
         return 4
     fi
 
-    # If no arguments provided, then just SSH but CD to cwd in synced_folder and leave with prompt
     if [ -z "$1" ]; then
-        vagrant ssh -c "\
-            echo $dir > /tmp/vassh_start_dir; \
-            if ! grep -q vassh_start_dir ~/.bashrc; then \
-                echo 'if [ -e /tmp/vassh_start_dir ]; then cd \$(cat /tmp/vassh_start_dir); rm /tmp/vassh_start_dir; fi' >> ~/.bashrc;
-            fi \
-        "
-        vagrant ssh
-    # Otherwise run the command
+        cmd="cd $dir"
     else
-        cmd="cd $dir; $@"
-        vagrant ssh -c "$cmd" -- -t
+        cmd="cd $dir; $@; exit \$?"
     fi
+
+    # First we copy the $cmd to the Vagrant machine, and make sure it gets sourced in the .bashrc
+    # TODO: better if we did this with a synced_folder)
+    # Note: We do ssh-config instead of vagrant-ssh because stdin for vagrant-ssh for some reason is 'exit'
+    vagrant ssh-config > /tmp/vassh_ssh_config
+    ssh -q -F /tmp/vassh_ssh_config default '
+        cat - > /tmp/vassh_start_cmd;
+        if ! grep -q vassh_start_cmd ~/.bashrc; then
+            echo "
+                if [ -e /tmp/vassh_start_cmd ]; then
+                    mv /tmp/vassh_start_cmd{,~};
+                    source /tmp/vassh_start_cmd~;
+                fi
+            " >> ~/.bashrc;
+        fi
+    ' <<< $cmd
+
+    # Then open ssh and the command will get executed as part of the login
+    vagrant ssh
 }
 
 # Bash alias helper. Run the command via Vagraht SSH if we're in a Vagrant project,
@@ -110,6 +135,16 @@ function vassh {
 function _vassh_try {
     if _vagrant_locate_vagrantfile >/dev/null 2>&1; then
         vassh $@
+    else
+        $@
+    fi
+}
+
+# Bash alias helper. Run the command via Vagraht SSH if we're in a Vagrant project,
+# otherwide just run it on the host
+function _vasshin_try {
+    if _vagrant_locate_vagrantfile >/dev/null 2>&1; then
+        vasshin $@
     else
         $@
     fi
