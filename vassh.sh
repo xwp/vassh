@@ -90,7 +90,7 @@ function vassh {
     fi
     dir=$(_vagrant_locate_cwd_in_synced_folder)
     cmd="cd $dir; $@"
-    vagrant ssh -c "$cmd" -- -t
+    vagrant ssh -c "$cmd" -- -t -A
     # TODO: Support piping into vassh
 }
 
