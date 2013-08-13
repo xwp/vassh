@@ -4,7 +4,7 @@ The big pain of doing `vagrant ssh` is that it doesn’t drop you into the corre
 $ vassh wp core update
 ```
 
-There’s also a wrapper called `vasshin` which will shell you into Vagrant at the current directory, with a prompt for entering commands. This gets you colors and interactive tty. You can also pass commands as arguments to `vasshin` to have them executed right away in the colorized tty (with some additional Vagrant .bash_login echoes and SSH connection close):
+There’s also a wrapper called `vasshin` which will shell you into Vagrant at the current directory, with a prompt for entering commands. This gets you colors and interactive TTY. You can also pass commands as arguments to `vasshin` to have them executed right away in the colorized TTY (with some additional Vagrant `.bash_login` echoes and SSH connection close):
 
 ```sh
 $ vasshin wp post list # nice table!
