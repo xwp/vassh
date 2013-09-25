@@ -7,7 +7,7 @@
 # USAGE:
 # (Installation: First source vassh.sh into your .bashrc)
 # $ cd /home/thunderboy/vagrantproject/some/subdir
-# $ vaash pwd
+# $ vassh pwd
 # /vagrant/some/subdir
 # $ vassh make
 # $ vassh wp core update
