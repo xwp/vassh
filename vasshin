@@ -1,0 +1,8 @@
+#!/bin/bash
+# Wrapper for vasshin for use in subshells
+set -e
+dir=$(dirname $0)
+if [ -L $0 ]; then
+	dir=$dir/$(dirname $(readlink $0))
+fi
+vasshin "$@"
