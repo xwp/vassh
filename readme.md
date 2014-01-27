@@ -10,7 +10,7 @@ There’s also a wrapper called `vasshin` which will shell you into Vagrant at t
 $ vasshin wp post list # nice table!
 ```
 
-You can put these files anywhere, as long as you source them via your .bashrc or .bash_profile.  They aren't read by Vagrant, so they're independent. Example:
+You can put these files anywhere, as long as you source them via your `.bashrc` or `.bash_profile`.  They aren't read by Vagrant, so they're independent. Example:
 
 ```sh
 git clone https://github.com/x-team/vassh.git ~/code/vassh
