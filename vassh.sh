@@ -19,7 +19,16 @@
 
 # TODO: Is this more suitable as a Vagrant plugin? http://docs.vagrantup.com/v2/plugins/
 # TODO: Can we keep the SSH connection open to speed up commands?
-
+function usage {
+    echo "vassh: Vagrant Host-Guest SSH Command Wrapper/Proxy/Forwarder"
+    echo " "
+    echo "vassh command"
+    echo "    command will be executed in the vagrant vm"
+    echo " "
+    echo "vasshin command"
+    echo "    vasshin drops you in Bash promt inside the corresponding synced_folder"
+    exit 0
+}
 
 # Walk up the directory tree to find a Vagrantfile
 function _vagrant_locate_vagrantfile {
@@ -84,6 +93,14 @@ __HERE__
 # Wrapper command which passes arguments into vagrant-ssh as a command to execute in the
 # synced_folder (sub)directory corresponding to the host's current working directory
 function vassh {
+    while getopts "h" o; do
+      case "${o}" in
+        h)
+          usage
+        ;;
+      esac
+    done
+
     if [ -z "$1" ]; then
         echo "vassh: Missing command to run on other system" 1>&2
         return 4
