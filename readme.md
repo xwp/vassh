@@ -17,3 +17,9 @@ git clone https://github.com/x-team/vassh.git ~/code/vassh
 echo "source ~/code/vassh/vassh.sh" >> ~/.bash_profile
 source ~/.bash_profile
 ```
+
+Installation is also now possible via Homebrew ([props @kanedo](https://github.com/x-team/vassh/issues/9)):
+
+```sh
+brew update && brew install vassh
+```
