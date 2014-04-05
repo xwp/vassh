@@ -27,7 +27,7 @@ function usage {
     echo " "
     echo "vasshin command"
     echo "    vasshin drops you in Bash promt inside the corresponding synced_folder"
-    exit 0
+    exit 1
 }
 
 # Walk up the directory tree to find a Vagrantfile
