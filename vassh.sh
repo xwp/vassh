@@ -129,8 +129,8 @@ function vasshin {
     # First we copy the $cmd to the Vagrant machine, and make sure it gets sourced in the .bashrc
     # TODO: better if we did this with a synced_folder)
     # Note: We do ssh-config instead of vagrant-ssh because stdin for vagrant-ssh for some reason is 'exit'
-    vagrant ssh-config > /tmp/vassh_ssh_config
-    ssh -q -F /tmp/vassh_ssh_config default '
+    vagrant ssh-config > /tmp/$USER.vassh_ssh_config
+    ssh -q -F /tmp/$USER.vassh_ssh_config default '
         cat - > /tmp/vassh_start_cmd;
         if ! grep -q vassh_start_cmd ~/.bashrc; then
             echo "
